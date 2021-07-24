@@ -1,10 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
+    <v-app-bar app color="primary" dark>
       <div class="d-flex align-center">
         <v-img
           alt="Vuetify Logo"
@@ -27,34 +23,43 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
+      <v-btn @click="isAuth ? googleLogout() : googleLogin()" text>
+        <v-icon>mdi-account</v-icon>
+        <span class="mr-2">{{ isAuth ? "logout" : "Login" }}</span>
       </v-btn>
     </v-app-bar>
 
-    <v-main>
-      <HelloWorld/>
-    </v-main>
+    <v-main> <Savings /> </v-main>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
-
+import Savings from "./components/SavingsTable";
+import { login, logout } from "./service/auth";
+import store from "./store";
 export default {
-  name: 'App',
+  name: "App",
 
   components: {
-    HelloWorld,
+    Savings,
   },
-
-  data: () => ({
-    //
-  }),
+  computed: {
+    isAuth() {
+      return store.getters.isLoggedIn;
+    },
+  },
+  created() {
+    if (!this.isAuth) {
+      this.googleLogin;
+    }
+  },
+  methods: {
+    googleLogin() {
+      login();
+    },
+    googleLogout() {
+      logout();
+    },
+  },
 };
 </script>
