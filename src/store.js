@@ -17,6 +17,12 @@ const store = new Vuex.Store({
     },
     dataService: null,
   },
+  actions: {
+    new_savings(state, savings) {
+      const newSavings = state.commit("updateSavings", savings);
+      state.commit("updateStoreSavings", newSavings);
+    },
+  },
   mutations: {
     login(state, { token, user }) {
       state.token = token;
@@ -28,23 +34,32 @@ const store = new Vuex.Store({
       state.user = {};
     },
     updateSavings(state, savings) {
-      const newSavings = state.dataService.setSavings(savings);
-      console.log(newSavings);
+      return state.dataService.setSavings(savings);
+    },
+    updateStoreSavings(state, savings) {
       state.savings = savings;
     },
   },
   getters: {
     isLoggedIn: (state) => {
-      console.log(state);
       if (state.token) {
         state.dataService.getSavings();
-        // console.log(state.dataService);
-        // console.log(savings);
       }
       return state.token != null && state.user != {};
     },
-    getUserSavings: (state) => {
-      return state.savings;
+    getUserSavings: async (state) => {
+      let value = await state.dataService
+        .getSavings()
+        .then((val) => {
+          console.log(val);
+          // value = val;
+          return val;
+        })
+        .then((result) => {
+          return result;
+        });
+
+      return value;
     },
     getUserId: (state) => {
       return state.user.uid;

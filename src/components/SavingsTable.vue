@@ -24,7 +24,7 @@
             <td>
               <v-icon>{{ bucket.icon }}</v-icon>
             </td>
-            <td>{{ key }}</td>
+            <td>{{ key.charAt(0).toUpperCase() + key.slice(1) }}</td>
             <td>
               $
               {{ parseInt(bucket.amount) + parseInt(bucket.changes) }}
@@ -84,8 +84,6 @@
 <script>
 import store from "../store";
 // TODO: Rounding issues, if have devimal, give to necessity
-// TODO: capitalize xiangmu
-// TODO: necessity, emergency, investment, learning, fun
 export default {
   name: "SavingsTable",
 
@@ -94,22 +92,6 @@ export default {
       icon: ["mdi-account"],
       income: 0,
       savings: {
-        fun: {
-          icon: "mdi-cards-spade",
-          amount: 0,
-          add: 0,
-          minus: 0,
-          changes: 0,
-          ratio: 0.1,
-        },
-        investment: {
-          icon: "mdi-bank",
-          amount: 0,
-          add: 0,
-          minus: 0,
-          changes: 0,
-          ratio: 0.1,
-        },
         necessity: {
           icon: "mdi-calendar-check",
           amount: 0,
@@ -126,8 +108,24 @@ export default {
           changes: 0,
           ratio: 0.1,
         },
+        investment: {
+          icon: "mdi-bank",
+          amount: 0,
+          add: 0,
+          minus: 0,
+          changes: 0,
+          ratio: 0.1,
+        },
         learning: {
           icon: "mdi-microsoft-visual-studio-code",
+          amount: 0,
+          add: 0,
+          minus: 0,
+          changes: 0,
+          ratio: 0.1,
+        },
+        fun: {
+          icon: "mdi-cards-spade",
           amount: 0,
           add: 0,
           minus: 0,
@@ -140,7 +138,6 @@ export default {
   watch: {
     isAuth: function(val) {
       if (val) {
-        // TODO: getSavings won't update on login
         this.getSavings();
       }
     },
@@ -149,15 +146,18 @@ export default {
     isAuth() {
       return store.getters.isLoggedIn;
     },
+    getNewSavings() {
+      return store.getters.getUserSavings;
+    },
   },
   methods: {
-    getSavings() {
-      const savings = store.getters.getUserSavings;
-      this.savings.necessity.amount = savings.necessity;
-      this.savings.learning.amount = savings.learning;
-      this.savings.fun.amount = savings.fun;
-      this.savings.investment.amount = savings.investment;
-      this.savings.emergency.amount = savings.emergency;
+    async getSavings() {
+      if (this.isAuth) {
+        const savings = await this.getNewSavings;
+        for (const key in savings) {
+          this.savings[key].amount = savings[key];
+        }
+      }
     },
     onValueChange(event) {
       const value = parseInt(event.srcElement._value);
@@ -165,7 +165,6 @@ export default {
       const action = id.split("-")[1];
       id = id.split("-")[0];
       const bucket = this.savings[id];
-      console.log(bucket);
       if (action == "add" && value != bucket.add) {
         bucket.add = value;
         if (isNaN(bucket.add)) {
@@ -186,10 +185,7 @@ export default {
       }
       this.updateChanges(bucket);
     },
-    onIncomeChange(value) {
-      console.log(value);
-      let savings = this.savings;
-      console.log(savings);
+    onIncomeChange() {
       if (!this.income) {
         this.income = 0;
       }

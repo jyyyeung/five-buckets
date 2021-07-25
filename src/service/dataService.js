@@ -12,7 +12,7 @@ const defaultSavings = {
 };
 
 class DataService {
-  getSavings() {
+  async getSavings() {
     if (store && !this.uid && !this.db) {
       this.uid = firebase.auth().currentUser.uid;
       this.db = firebase
@@ -21,15 +21,20 @@ class DataService {
         .child("savings");
       this.userdb = this.db.child(this.uid);
     }
-    let savings = this.userdb.get().then((data) => {
-      let savingsData = data.val();
-      if (!data.val()) {
-        savingsData = this.setSavings(defaultSavings);
-      }
-      return savingsData;
-    });
-    console.log(savings);
-    return savings;
+
+    return await this.userdb
+      .get()
+      .then((data) => {
+        const savings = data.val()
+          ? data.val()
+          : this.setSavings(defaultSavings);
+
+        store.commit("updateStoreSavings", savings);
+        return savings;
+      })
+      .then((result) => {
+        return result;
+      });
   }
 
   setSavings(saving) {
