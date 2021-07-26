@@ -11,7 +11,9 @@
           width="40"
         />
 
-        <v-toolbar-title>Five Buckets</v-toolbar-title>
+        <v-toolbar-title class="d-none d-sm-flex d-md-none"
+          >Five Buckets</v-toolbar-title
+        >
       </div>
 
       <v-spacer></v-spacer>

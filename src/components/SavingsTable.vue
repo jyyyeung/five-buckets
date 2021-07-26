@@ -8,13 +8,13 @@
             <th class="text-left">
               项目
             </th>
-            <th class="text-left">
+            <th style="min-width: 125px" class="text-left">
               存款
             </th>
-            <th class="text-left">
+            <th style="min-width: 175px" class="text-left">
               收入
             </th>
-            <th class="text-left">
+            <th style="min-width: 140px" class="text-left">
               支出
             </th>
           </tr>
@@ -26,8 +26,16 @@
             </td>
             <td>{{ key.charAt(0).toUpperCase() + key.slice(1) }}</td>
             <td>
-              $
-              {{ bucket.amount + bucket.changes }}
+              <v-text-field
+                flat
+                dense
+                :label="bucket"
+                hide-details
+                solo
+                readonly
+                :value="bucket.amount + bucket.changes"
+                prefix="$"
+              ></v-text-field>
             </td>
             <td>
               <v-text-field
@@ -72,12 +80,7 @@
         </tbody>
       </template>
     </v-simple-table>
-    <v-row class="d-flex flex-row-reverse">
-      <v-col cols="auto" align-self="end">
-        <v-btn text elevation="2" :disabled="!isAuth" @click="updateSavings"
-          >Save</v-btn
-        >
-      </v-col>
+    <v-row class="d-flex flex-row justify-end">
       <v-col cols="auto">
         <v-text-field
           flat
@@ -93,6 +96,11 @@
             }
           "
         ></v-text-field>
+      </v-col>
+      <v-col cols="auto" align-self="end">
+        <v-btn text elevation="2" :disabled="!isAuth" @click="updateSavings"
+          >Save</v-btn
+        >
       </v-col>
     </v-row>
   </v-card>
