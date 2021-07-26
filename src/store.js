@@ -15,7 +15,7 @@ export const db = firebase
 const store = new Vuex.Store({
   state: {
     token: null,
-    user: {},
+    // user: {},
     savings: {
       necessity: 0,
       emergency: 0,
@@ -47,15 +47,15 @@ const store = new Vuex.Store({
   },
   mutations: {
     ...vuexfireMutations,
-    login(state, { token, user }) {
+    login(state, { token }) {
       state.token = token;
-      state.user = user;
+      // state.user = user;
       state.dataService = DataService;
       state.savings = state.defaultSavings;
     },
     logout(state) {
       state.token = null;
-      state.user = {};
+      // state.user = {};
     },
     updateSavings(state, savings) {
       state.dataService.setSavings(savings);
@@ -70,7 +70,8 @@ const store = new Vuex.Store({
       if (state.token) {
         state.dataService.getSavings();
       }
-      return state.token != null && state.user != {};
+      // return state.token != null && state.user != {};
+      return state.token != null;
     },
     getUserSavings: (state) => {
       const value = state.savings;
