@@ -39,7 +39,7 @@
                 solo
                 :id="key + '-add'"
                 prefix="$"
-                :suffix="'(' + income * bucket.ratio + ')'"
+                :suffix="'(' + bucket.ratioValue + ')'"
                 type="number"
                 @change="
                   if (!$event) {
@@ -95,7 +95,7 @@
 
 <script>
 import store from "../store";
-// TODO: Rounding issues, if have devimal, give to necessity
+
 export default {
   name: "SavingsTable",
 
@@ -110,6 +110,7 @@ export default {
           minus: 0,
           changes: 0,
           ratio: 0.6,
+          ratioValue: 0,
         },
         emergency: {
           icon: "mdi-bug",
@@ -118,6 +119,7 @@ export default {
           minus: 0,
           changes: 0,
           ratio: 0.1,
+          ratioValue: 0,
         },
         investment: {
           icon: "mdi-bank",
@@ -126,6 +128,7 @@ export default {
           minus: 0,
           changes: 0,
           ratio: 0.1,
+          ratioValue: 0,
         },
         learning: {
           icon: "mdi-microsoft-visual-studio-code",
@@ -134,6 +137,7 @@ export default {
           minus: 0,
           changes: 0,
           ratio: 0.1,
+          ratioValue: 0,
         },
         fun: {
           icon: "mdi-cards-spade",
@@ -142,6 +146,7 @@ export default {
           minus: 0,
           changes: 0,
           ratio: 0.1,
+          ratioValue: 0,
         },
       },
     };
@@ -221,13 +226,21 @@ export default {
         this.income = 0;
       }
 
+      const remainder = this.income % 10;
+      const maxInt = this.income - remainder;
+
       for (const key in this.savings) {
         const bucket = this.savings[key];
+
+        bucket.ratioValue = maxInt * bucket.ratio;
+        if (key == "necessity") {
+          bucket.ratioValue += remainder;
+        }
         this.updateChanges(bucket);
       }
     },
     updateChanges(bucket) {
-      bucket.changes = bucket.add - bucket.minus + this.income * bucket.ratio;
+      bucket.changes = bucket.add - bucket.minus + bucket.ratioValue;
     },
     updateSavings() {
       const updatedSavings = {};
