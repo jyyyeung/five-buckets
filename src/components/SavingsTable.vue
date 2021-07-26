@@ -27,7 +27,7 @@
             <td>{{ key.charAt(0).toUpperCase() + key.slice(1) }}</td>
             <td>
               $
-              {{ parseInt(bucket.amount) + parseInt(bucket.changes) }}
+              {{ bucket.amount + bucket.changes }}
             </td>
             <td>
               <v-text-field
@@ -41,7 +41,11 @@
                 prefix="$"
                 :suffix="'(' + income * bucket.ratio + ')'"
                 type="number"
-                @blur="onValueChange($event)"
+                @change="
+                  if (!$event) {
+                    bucket.add = 0;
+                  }
+                "
               ></v-text-field>
             </td>
             <td>
@@ -54,8 +58,12 @@
                 hide-details
                 solo
                 prefix="$"
-                @blur="onValueChange($event)"
                 type="number"
+                @change="
+                  if (!$event) {
+                    bucket.minus = 0;
+                  }
+                "
               ></v-text-field>
             </td>
           </tr>
@@ -74,7 +82,11 @@
           hide-details
           prefix="$"
           type="number"
-          @change="onIncomeChange"
+          @change="
+            if (!$event) {
+              income = 0;
+            }
+          "
         ></v-text-field>
       </v-col>
     </v-row>
@@ -132,10 +144,23 @@ export default {
           ratio: 0.1,
         },
       },
-      // storeSavings: () => {
-      //   return store.state.savings;
-      // },
     };
+  },
+  created() {
+    for (const key in this.savings) {
+      const bucket = this.savings[key];
+      this.$watch(
+        () => bucket.add,
+        () => this.onChange(bucket),
+        { deep: true }
+      );
+      this.$watch(
+        () => bucket.minus,
+        () => this.onChange(bucket),
+        { deep: true }
+      );
+    }
+    this.$watch("income", this.onIncomeChange, { deep: true });
   },
   watch: {
     isAuth: function(val) {
@@ -157,7 +182,6 @@ export default {
   },
   computed: {
     isAuth() {
-      // console.log("storesavings", this.storeSavings());
       return store.getters.isLoggedIn;
     },
     getNewSavings() {
@@ -189,30 +213,7 @@ export default {
         }
       }
     },
-    onValueChange(event) {
-      const value = parseInt(event.srcElement._value);
-      let id = event.srcElement.id;
-      const action = id.split("-")[1];
-      id = id.split("-")[0];
-      const bucket = this.savings[id];
-      if (action == "add" && value != bucket.add) {
-        bucket.add = value;
-        if (isNaN(bucket.add)) {
-          bucket.add = 0;
-        } else {
-          bucket.changes += parseInt(value);
-        }
-      } else if (action == "minus" && value != bucket.minus) {
-        bucket.minus = value;
-        if (isNaN(bucket.minus)) {
-          bucket.minus = 0;
-        } else {
-          bucket.changes -= parseInt(value);
-        }
-      }
-      if (isNaN(bucket.changes)) {
-        bucket.changes = 0;
-      }
+    onChange(bucket) {
       this.updateChanges(bucket);
     },
     onIncomeChange() {
