@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-card flat>
     <v-simple-table>
       <template v-slot:default>
         <thead>
@@ -37,12 +37,13 @@
                 label="Solo"
                 hide-details
                 solo
+                :disabled="!isAuth"
                 :id="key + '-add'"
                 prefix="$"
-                :suffix="'(' + bucket.ratioValue + ')'"
+                :suffix="'( ' + bucket.ratioValue + ' )'"
                 type="number"
                 @change="
-                  if (!$event) {
+                  if (!$event || $event < 0) {
                     bucket.add = 0;
                   }
                 "
@@ -55,12 +56,13 @@
                 :id="key + '-minus'"
                 v-model="bucket.minus"
                 label="Solo"
+                :disabled="!isAuth"
                 hide-details
                 solo
                 prefix="$"
                 type="number"
                 @change="
-                  if (!$event) {
+                  if (!$event || $event < 0) {
                     bucket.minus = 0;
                   }
                 "
@@ -72,7 +74,9 @@
     </v-simple-table>
     <v-row class="d-flex flex-row-reverse">
       <v-col cols="auto" align-self="end">
-        <v-btn text elevation="2" @click="updateSavings">Save</v-btn>
+        <v-btn text elevation="2" :disabled="!isAuth" @click="updateSavings"
+          >Save</v-btn
+        >
       </v-col>
       <v-col cols="auto">
         <v-text-field
@@ -80,6 +84,7 @@
           v-model="income"
           label="Income"
           hide-details
+          :disabled="!isAuth"
           prefix="$"
           type="number"
           @change="
@@ -90,7 +95,7 @@
         ></v-text-field>
       </v-col>
     </v-row>
-  </v-container>
+  </v-card>
 </template>
 
 <script>
@@ -102,6 +107,7 @@ export default {
   data() {
     return {
       income: 0,
+      hover: false,
       savings: {
         necessity: {
           icon: "mdi-calendar-check",

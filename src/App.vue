@@ -11,14 +11,7 @@
           width="40"
         />
 
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
+        <v-toolbar-title>Five Buckets</v-toolbar-title>
       </div>
 
       <v-spacer></v-spacer>
@@ -29,7 +22,20 @@
       </v-btn>
     </v-app-bar>
 
-    <v-main> <Savings /> </v-main>
+    <v-main>
+      <v-hover>
+        <template v-slot:default="{ hover }">
+          <v-container>
+            <Savings />
+            <v-fade-transition>
+              <v-overlay v-if="hover && !isAuth" absolute color="primary">
+                <v-btn @click="googleLogin">Please Login</v-btn>
+              </v-overlay>
+            </v-fade-transition>
+          </v-container>
+        </template>
+      </v-hover></v-main
+    >
   </v-app>
 </template>
 
@@ -43,6 +49,11 @@ export default {
   components: {
     Savings,
   },
+  data: function() {
+    return {
+      hover: false,
+    };
+  },
   computed: {
     isAuth() {
       return store.getters.isLoggedIn;
@@ -51,21 +62,6 @@ export default {
   created() {
     if (!this.isAuth) {
       this.googleLogin();
-    } else {
-      // userdb.on("value", (snapshot) => {
-      //   console.log("created", snapshot.val());
-      // });
-      // getData(this.userdb)
-      // .then((data) => {
-      //   console.log("getData ref.val()", data);
-      //   const savings = data
-      //     ? data
-      //     : this.setSavings(store.state.defaultSavings);
-      //   store.commit("updateStoreSavings", savings);
-      // })
-      // .catch((error) => {
-      //   console.error("getData", error);
-      // });
     }
   },
   methods: {
