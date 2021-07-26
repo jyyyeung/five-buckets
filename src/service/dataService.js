@@ -3,16 +3,16 @@ import store from "../store";
 import "firebase/database";
 import "firebase/auth";
 
-const defaultSavings = {
-  necessity: 0,
-  emergency: 0,
-  fun: 0,
-  learning: 0,
-  investment: 0,
-};
-
+// const getData = (ref) => {
+//   return new Promise((resolve, reject) => {
+//     const onError = (error) => reject(error);
+//     const onData = (snap) => resolve(snap.val());
+//     ref.on("value", onData, onError);
+//     console.log("ref.on");
+//   });
+// };
 class DataService {
-  async getSavings() {
+  getSavings() {
     if (store && !this.uid && !this.db) {
       this.uid = firebase.auth().currentUser.uid;
       this.db = firebase
@@ -21,20 +21,17 @@ class DataService {
         .child("savings");
       this.userdb = this.db.child(this.uid);
     }
-
-    return await this.userdb
-      .get()
-      .then((data) => {
-        const savings = data.val()
-          ? data.val()
-          : this.setSavings(defaultSavings);
-
-        store.commit("updateStoreSavings", savings);
-        return savings;
-      })
-      .then((result) => {
-        return result;
-      });
+    // getData(this.userdb)
+    //   .then((data) => {
+    //     console.log("getData ref.val()", data);
+    //     const savings = data
+    //       ? data
+    //       : this.setSavings(store.state.defaultSavings);
+    //     store.commit("updateStoreSavings", savings);
+    //   })
+    //   .catch((error) => {
+    //     console.error("getData", error);
+    //   });
   }
 
   setSavings(saving) {

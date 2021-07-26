@@ -50,7 +50,22 @@ export default {
   },
   created() {
     if (!this.isAuth) {
-      this.googleLogin;
+      this.googleLogin();
+    } else {
+      // userdb.on("value", (snapshot) => {
+      //   console.log("created", snapshot.val());
+      // });
+      // getData(this.userdb)
+      // .then((data) => {
+      //   console.log("getData ref.val()", data);
+      //   const savings = data
+      //     ? data
+      //     : this.setSavings(store.state.defaultSavings);
+      //   store.commit("updateStoreSavings", savings);
+      // })
+      // .catch((error) => {
+      //   console.error("getData", error);
+      // });
     }
   },
   methods: {

@@ -89,7 +89,6 @@ export default {
 
   data() {
     return {
-      icon: ["mdi-account"],
       income: 0,
       savings: {
         necessity: {
@@ -133,17 +132,32 @@ export default {
           ratio: 0.1,
         },
       },
+      // storeSavings: () => {
+      //   return store.state.savings;
+      // },
     };
   },
   watch: {
     isAuth: function(val) {
       if (val) {
+        store.dispatch("bindSavings");
         this.getSavings();
+      } else {
+        this.resetSavings();
+        this.resetChanges();
       }
+    },
+    getNewSavings: {
+      handler(val) {
+        console.log("watch getnewsavings", val);
+        this.getSavings();
+      },
+      deep: true,
     },
   },
   computed: {
     isAuth() {
+      // console.log("storesavings", this.storeSavings());
       return store.getters.isLoggedIn;
     },
     getNewSavings() {
@@ -151,9 +165,25 @@ export default {
     },
   },
   methods: {
-    async getSavings() {
+    resetChanges() {
+      for (const key in this.savings) {
+        const bucket = this.savings[key];
+        bucket.add = 0;
+        bucket.minus = 0;
+        bucket.changes = 0;
+      }
+      this.income = 0;
+    },
+    resetSavings() {
+      for (const key in this.savings) {
+        const bucket = this.savings[key];
+        bucket.amount = 0;
+      }
+    },
+    getSavings() {
       if (this.isAuth) {
-        const savings = await this.getNewSavings;
+        const savings = this.getNewSavings;
+        console.log("methods get savings", savings);
         for (const key in savings) {
           this.savings[key].amount = savings[key];
         }
@@ -205,9 +235,9 @@ export default {
         this.updateChanges(bucket);
         updatedSavings[key] = bucket.amount + bucket.changes;
       }
-
       store.commit("updateSavings", updatedSavings);
       this.getSavings();
+      this.resetChanges();
     },
   },
 };

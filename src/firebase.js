@@ -8,7 +8,6 @@ import "firebase/analytics";
 
 // Add the Firebase products that you want to use
 import "firebase/auth";
-import "firebase/firestore";
 
 // TODO: Replace the following with your app's Firebase project configuration
 // For Firebase JavaScript SDK v7.20.0 and later, `measurementId` is an optional field
