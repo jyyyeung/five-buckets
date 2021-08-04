@@ -1,4 +1,4 @@
-# five-buckets
+# Five Buckets
 
 Five Buckets for income management
 
