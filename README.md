@@ -1,5 +1,7 @@
 # five-buckets
 
+Five Buckets for income management
+
 ## Project setup
 ```
 yarn install
